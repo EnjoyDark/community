@@ -27,3 +27,15 @@
 [One Tab](https://chrome.google.com/webstore/detail/chphlpgkkbolifaimnlloiipkdnihall)    
 [Live Reload](https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei/related)  
 [Postman](https://chrome.google.com/webstore/detail/coohjcphdfgbiolnekdpbcijmhambjff)
+
+## 脚本
+```sql
+CREATE TABLE USER(
+    "ID" INT DEFAULT AUTO_INCREMENT PRIMARY KEY NOT NULL ,
+    "ACCOUNT_ID" VARCHAR(100),
+    "NAME" VARCHAR(50),
+    "TOKEN" CHAR(36),
+    "GMT_CREATE" BIGINT,
+    "GMT_MODIFIED" BIGINT
+);
+```
