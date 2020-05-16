@@ -33,11 +33,19 @@ public class PublishController {
             @RequestParam("tag")String tag,
             HttpServletRequest request,
             Model model){
-        model.addAttribute("title","title");
-        model.addAttribute("description","description");
-        model.addAttribute("tag","tag");
+        model.addAttribute("title",title);
+        model.addAttribute("description",description);
+        model.addAttribute("tag",tag);
         if(title==null || "".equals(title)){
             model.addAttribute("error", "标题不能为空");
+            return "publish";
+        }
+        if(description==null || "".equals(description)){
+            model.addAttribute("error", "描述不能为空");
+            return "publish";
+        }
+        if(tag==null || "".equals(tag)){
+            model.addAttribute("error", "标签不能为空");
             return "publish";
         }
 

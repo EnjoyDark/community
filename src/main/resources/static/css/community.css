@@ -10,3 +10,11 @@ body{
     float: right;
     margin-bottom: 15px;
 }
+.media-object{
+    width: 38px;
+    height: 38px;
+}
+.text-desc{
+    margin: 0;
+    color: #999;
+}
