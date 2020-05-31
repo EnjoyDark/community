@@ -42,9 +42,6 @@ public class CommentService {
         if (comment.getType() == null || !CommentTypeEnum.isExist(comment.getType())) {
             throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
         }
-        if(comment.getContent() ==null || "".equals(comment.getContent())){
-            throw new CustomizeException(CustomizeErrorCode.CONTENT_IS_EMPTY);
-        }
 
         // 判断回复的是问题，还是评论
         if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())) {
@@ -66,11 +63,12 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTO> listByQuestionId(Long id) {
+    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
         CommentExample example = new CommentExample();
         example.createCriteria()
                 .andParentIdEqualTo(id)
-                .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+                .andTypeEqualTo(type.getType());
+        example.setOrderByClause("`gmt_create` desc");
         List<Comment> comments =  commentMapper.selectByExample(example);
 
         if (comments.size() == 0) {

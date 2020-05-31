@@ -49,7 +49,9 @@ public class QuestionService {
         // 5*(1-1)   limit 0, 5
         Integer offset = size * (page - 1);
 
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questions) {
