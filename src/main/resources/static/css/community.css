@@ -34,8 +34,30 @@ body {
     margin-top: 25px;
 }
 
+.question-tag{
+    margin-right: 5px;
+}
+
+.question-related{
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0;
+    list-style: none;
+    padding-left: 0;
+}
+
+.question-wechat{
+    width: 50%
+;
+}
+
+.publish-tag-tab{
+    display: none;
+    margin-top: 10px;
+}
+
 .community-menu {
-    display: block;
+    display: inline-block;
     color: #999;
     font-size: 13px;
     margin-bottom: 15px;

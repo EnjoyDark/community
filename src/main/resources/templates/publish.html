@@ -10,6 +10,7 @@
 <!--    <script src="/js/script.js" type="application/javascript"></script>-->
     <script src="/js/jquery-3.5.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -33,7 +34,24 @@
                 <div class="form-group">
                     <label for="tag">添加标签</label>
                     <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签，以，号分隔"
-                           th:value="${tag}">
+                           th:value="${tag}" onclick="showSelectTag()">
+
+                    <div th:id="select-tag" class="publish-tag-tab" >
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">开发语言</a></li>
+                            <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">平台框架</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home">
+                                <span class="label label-info"><span class="glyphicon glyphicon-tags" onclick="selectTag('Spring')">Spring</span></span>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="profile">
+                                <span class="label label-info"><span class="glyphicon glyphicon-tags" onclick="selectTag('Java')">Java</span></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="container-fluid main">
                     <div class="row">
