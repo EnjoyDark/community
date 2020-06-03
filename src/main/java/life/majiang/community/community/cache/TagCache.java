@@ -1,13 +1,17 @@
 package life.majiang.community.community.cache;
 
 import life.majiang.community.community.dto.TagDTO;
+import org.apache.commons.lang3.StringUtils;
+import sun.swing.StringUIClientPropertyKey;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class TagCache {
-    public List<TagDTO> get(){
+    public static List<TagDTO> get() {
         List<TagDTO> tagDTOS = new ArrayList<>();
         TagDTO program = new TagDTO();
         program.setCategoryName("开发语言");
@@ -35,5 +39,15 @@ public class TagCache {
         tool.setTags(Arrays.asList("git", "github", "visual-studio-code", "vim", "sublime-text", "xcode intellij-idea", "eclipse", "maven", "ide", "svn", "visual-studio", "atom emacs", "textmate", "hg"));
         tagDTOS.add(tool);
         return tagDTOS;
+    }
+
+    public static String filterInvalid(String tags) {
+        String[] split = StringUtils.split(tags, ',');
+        List<TagDTO> tagDTOS = get();
+        List<String> tagList = tagDTOS.stream().flatMap(tag -> tag.getTags().stream()).collect(Collectors.toList());
+
+        String invalid = Arrays.stream(split).filter(t -> !tagList.contains(t)).collect(Collectors.joining(","));
+
+        return invalid;
     }
 }

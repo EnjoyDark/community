@@ -44,7 +44,6 @@
                     <a th:href="@{'/publish/' + ${question.id}}" class="community-menu"
                        th:if="${session.user != null && session.user.id == question.creator}">
                         <span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true">编辑</span>
-
                     </a>
                 </div>
             </div>

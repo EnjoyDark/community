@@ -56,6 +56,16 @@ body {
     margin-top: 10px;
 }
 
+.publish-tag-tab .tab-content{
+    padding-top: 10px;
+}
+
+.publish-tag-tab .label-info{
+    display: inline-block;
+    margin: 5px 5px;
+    white-space: normal;
+}
+
 .community-menu {
     display: inline-block;
     color: #999;
