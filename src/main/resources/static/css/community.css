@@ -7,6 +7,10 @@ body {
     margin: 30px;
 }
 
+.badge{
+    background-color: #ff4700;
+}
+
 .btn-publish {
     float: right;
     margin-bottom: 15px;

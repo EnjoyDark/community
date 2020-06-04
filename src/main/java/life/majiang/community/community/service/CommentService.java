@@ -2,6 +2,8 @@ package life.majiang.community.community.service;
 
 import life.majiang.community.community.dto.CommentDTO;
 import life.majiang.community.community.enums.CommentTypeEnum;
+import life.majiang.community.community.enums.NotificationStatusEnum;
+import life.majiang.community.community.enums.NotificationTypeEnum;
 import life.majiang.community.community.exception.CustomizeErrorCode;
 import life.majiang.community.community.exception.CustomizeException;
 import life.majiang.community.community.mapper.*;
@@ -30,9 +32,11 @@ public class CommentService {
     private UserMapper userMapper;
     @Autowired
     private CommentExtMapper commentExtMapper;
+    @Autowired
+    private NotificationMapper notificationMapper;
 
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         // 判断评论的目标是否存在
         if (comment.getParentId() == null || comment.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
@@ -41,12 +45,15 @@ public class CommentService {
         if (comment.getType() == null || !CommentTypeEnum.isExist(comment.getType())) {
             throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
         }
-
         // 判断回复的是问题，还是评论
         if (comment.getType().equals(CommentTypeEnum.COMMENT.getType())) {
             // 回复评论
             Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
             if (dbComment == null) {
+                throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
+            }
+            Question question = questionMapper.selectByPrimaryKey(dbComment.getParentId());
+            if (question == null) {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
@@ -55,7 +62,9 @@ public class CommentService {
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
             commentExtMapper.incCommentCount(parentComment);
-        }else{
+            // 创建通知
+            createNotify(comment, dbComment.getCommentator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_COMMENT, question.getId());
+        } else {
             // 回复问题
             Question question = questionMapper.selectByPrimaryKey(comment.getParentId());
             if (question == null) {
@@ -64,7 +73,22 @@ public class CommentService {
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExtMapper.incCommentCount(question);
+            // 创建通知
+            createNotify(comment, question.getCreator(), commentator.getName(), question.getTitle(), NotificationTypeEnum.REPLY_QUESTION, question.getId());
         }
+    }
+
+    private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationTypeEnum notificationTypeEnum, Long outerid) {
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setType(notificationTypeEnum.getType());
+        notification.setOuterid(outerid);  // 评论id
+        notification.setNotifier(comment.getCommentator());  // 评论人id
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setReceiver(receiver);  // 被评论人id
+        notification.setNotifierName(notifierName);
+        notification.setOuterTitle(outerTitle);
+        notificationMapper.insert(notification);
     }
 
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
@@ -73,7 +97,7 @@ public class CommentService {
                 .andParentIdEqualTo(id)
                 .andTypeEqualTo(type.getType());
         example.setOrderByClause("`gmt_create` desc");
-        List<Comment> comments =  commentMapper.selectByExample(example);
+        List<Comment> comments = commentMapper.selectByExample(example);
 
         if (comments.size() == 0) {
             return new ArrayList<>();

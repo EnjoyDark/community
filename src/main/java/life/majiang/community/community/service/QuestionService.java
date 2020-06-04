@@ -32,7 +32,7 @@ public class QuestionService {
     private QuestionExtMapper questionExtMapper;
 
     public PaginationDTO list(Integer page, Integer size) {
-        PaginationDTO paginationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
 
         // 完成分页数据填充
         Integer totalPage;  // 总页数
@@ -65,7 +65,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
 
         // 将paginationDTO的属性值全赋好后，return
         return paginationDTO;
@@ -109,7 +109,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
 
         // 将paginationDTO的属性值全赋好后，return
         return paginationDTO;

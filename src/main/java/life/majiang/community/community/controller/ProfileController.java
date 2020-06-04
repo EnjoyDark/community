@@ -3,6 +3,7 @@ package life.majiang.community.community.controller;
 import life.majiang.community.community.dto.PaginationDTO;
 import life.majiang.community.community.mapper.UserMapper;
 import life.majiang.community.community.model.User;
+import life.majiang.community.community.service.NotificationService;
 import life.majiang.community.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,15 +20,17 @@ public class ProfileController {
     UserMapper userMapper;
     @Autowired
     QuestionService questionService;
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping("/profile/{action}")
     public String profile(
-            @PathVariable(name = "action")String action, Model model,
+            @PathVariable(name = "action") String action, Model model,
             HttpServletRequest request,
-            @RequestParam(name="page", defaultValue = "1")Integer page,
-            @RequestParam(name="size", defaultValue = "10")Integer size) {
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
 
-        User user = (User)request.getSession().getAttribute("user");
+        User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             return "redirect:index";
         }
@@ -35,12 +38,17 @@ public class ProfileController {
         if ("questions".equals(action)) {
             model.addAttribute("section", "questions");
             model.addAttribute("sectionName", "我的提问");
-        }else if("replies".equals(action)){
+            PaginationDTO pagination = questionService.list(user.getId(), page, size);
+            model.addAttribute("pagination", pagination);
+        } else if ("replies".equals(action)) {
             model.addAttribute("section", "replies");
             model.addAttribute("sectionName", "最新回复");
+            PaginationDTO pagination = notificationService.list(user.getId(), page, size);
+            Long unreadCount = notificationService.unreadCount(user.getId());
+            model.addAttribute("pagination", pagination);
+            model.addAttribute("unreadCount", unreadCount);
         }
-        PaginationDTO pagination = questionService.list(user.getId(), page, size);
-        model.addAttribute("pagination", pagination);
+
         return "profile";
     }
 }
