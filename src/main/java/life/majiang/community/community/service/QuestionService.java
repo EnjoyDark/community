@@ -2,6 +2,7 @@ package life.majiang.community.community.service;
 
 import life.majiang.community.community.dto.PaginationDTO;
 import life.majiang.community.community.dto.QuestionDTO;
+import life.majiang.community.community.dto.QuestionQueryDTO;
 import life.majiang.community.community.exception.CustomizeErrorCode;
 import life.majiang.community.community.exception.CustomizeException;
 import life.majiang.community.community.mapper.QuestionExtMapper;
@@ -31,23 +32,41 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
+        if (StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
         PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
 
         // 完成分页数据填充
         Integer totalPage;  // 总页数
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());  // 总数量
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-        if (page < 1) { page = 1; }
-        if (page > totalPage) {
-            page = totalPage;
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = (int) questionExtMapper.countBySearch(questionQueryDTO);  // 总数量
+        if(totalCount == 0){
+//            paginationDTO.setPagination(0, 0);
+            paginationDTO.setShowFirstPage(false);
+            paginationDTO.setShowEndPage(false);
+            paginationDTO.setShowNext(false);
+            paginationDTO.setShowPrevious(false);
+        }else{
+            if (totalCount % size == 0) {
+                totalPage = totalCount / size;
+            } else {
+                totalPage = totalCount / size + 1;
+            }
+            if (page < 1) {
+                page = 1;
+            }
+            if (page > totalPage) {
+                page = totalPage;
+            }
+
+            paginationDTO.setPagination(totalPage, page);
         }
 
-        paginationDTO.setPagination(totalPage, page);
 
         // 数据库查询，填充question、user数据
         // 5*(1-1)   limit 0, 5
@@ -55,7 +74,9 @@ public class QuestionService {
 
         QuestionExample questionExample = new QuestionExample();
         questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionQueryDTO.setPage(offset);
+        questionQueryDTO.setSize(size);
+        List<Question> questions = questionExtMapper.selectBySearch(questionQueryDTO);
         ArrayList<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questions) {
@@ -79,14 +100,16 @@ public class QuestionService {
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria()
                 .andCreatorEqualTo(userId);
-        Integer totalCount = (int)questionMapper.countByExample(questionExample);  // 总数量
+        Integer totalCount = (int) questionMapper.countByExample(questionExample);  // 总数量
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
         } else {
             totalPage = totalCount / size + 1;
         }
-        if (page < 1) { page = 1; }
+        if (page < 1) {
+            page = 1;
+        }
         if (page > totalPage) {
             page = totalPage;
         }
@@ -117,7 +140,7 @@ public class QuestionService {
 
     public QuestionDTO getById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
-        if(question == null){
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NUT_FOUND);
         }
         QuestionDTO questionDTO = new QuestionDTO();
@@ -128,7 +151,7 @@ public class QuestionService {
     }
 
     public void createOrUpdate(Question question) {
-        if(question.getId() == null){
+        if (question.getId() == null) {
             // 创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
@@ -136,7 +159,7 @@ public class QuestionService {
             question.setLikeCount(0);
             question.setCommentCount(0);
             questionMapper.insert(question);
-        }else{
+        } else {
             // 更新
             question.setGmtModified(System.currentTimeMillis());
 
