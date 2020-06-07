@@ -2,7 +2,6 @@ package life.majiang.community.community.controller;
 
 import life.majiang.community.community.dto.AccessTokenDTO;
 import life.majiang.community.community.dto.GitHubUser;
-import life.majiang.community.community.mapper.UserMapper;
 import life.majiang.community.community.model.User;
 import life.majiang.community.community.provider.GitHubProvider;
 import life.majiang.community.community.service.UserService;
@@ -21,9 +20,6 @@ import java.util.UUID;
 public class AuthorizeController {
     @Autowired
     private GitHubProvider gitHubProvider;
-
-    @Autowired
-    private UserMapper userMapper;
 
     @Autowired
     private UserService userService;

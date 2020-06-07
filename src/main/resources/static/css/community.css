@@ -11,6 +11,11 @@ body {
     background-color: #ff4700;
 }
 
+.list-group-item.active>.badge, .nav-pills>.active>a>.badge {
+    color: white;
+    background-color: #ff4700;
+}
+
 .btn-publish {
     float: right;
     margin-bottom: 15px;
