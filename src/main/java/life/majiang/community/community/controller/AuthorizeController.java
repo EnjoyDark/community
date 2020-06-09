@@ -5,6 +5,7 @@ import life.majiang.community.community.dto.GitHubUser;
 import life.majiang.community.community.model.User;
 import life.majiang.community.community.provider.GitHubProvider;
 import life.majiang.community.community.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 public class AuthorizeController {
     @Autowired
     private GitHubProvider gitHubProvider;
@@ -58,6 +60,7 @@ public class AuthorizeController {
             request.getSession().setAttribute("user", gitHubUser);
             return "redirect:/";
         }else{
+            log.error("callback get github error, {}", gitHubUser);
             return "redirect:/";
         }
     }

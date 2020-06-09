@@ -42,5 +42,17 @@ CREATE TABLE USER(
 ```bash
 mvn flyway:migrate
 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
-
 ```
+
+
+## 部署
+### 依赖
+- Git
+- JDK
+- Maven
+- MySQL
+
+## 步骤
+- yum update
+- yum install git
+- mkdir apps 
