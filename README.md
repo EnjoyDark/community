@@ -42,6 +42,7 @@ CREATE TABLE USER(
 ```bash
 mvn flyway:migrate
 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
+mvn flyway:repair
 ```
 
 
@@ -53,6 +54,18 @@ mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate
 - MySQL
 
 ## 步骤
-- yum update
-- yum install git
+- sudo yum update
+- sudo yum install git
 - mkdir apps 
+- git clone https://github.com/EnjoyDark/community.git
+- sudo yum install mvn  
+**如果mvn安装失败，尝试下面命令**
+- sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+- yum -y install apache-maven
+- mvn -v
+- sudo mvn compile package (下载慢，配置国内镜像源)
+- cp src/main/resources/application.properties src/main/resources/application-production.properties 
+- sudo mvn package
+- sudo java -jar -Dspring.profiles.active=production community-0.0.1-SNAPSHOT.jar
+
+

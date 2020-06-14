@@ -70,6 +70,7 @@ public class AuthorizeController {
     public String logout(HttpServletRequest request,
                          HttpServletResponse response){
         request.getSession().removeAttribute("user");
+        request.getSession().removeAttribute("unreadCount");
         Cookie cookie = new Cookie("token", null);
         cookie.setMaxAge(0);
         response.addCookie(cookie);

@@ -10,7 +10,7 @@
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                         data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">K奇社区</span>
+<!--                    <span class="sr-only">K奇社区</span>-->
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -41,8 +41,10 @@
                             <li><a href="/logout">退出登录</a></li>
                         </ul>
                     </li>
-                    <li th:if="${session.user == null}"><a
-                            href="https://github.com/login/oauth/authorize?client_id=677a017266f47b147ff5&redirect_uri=http://localhost:8887/callback&scope=user&state=1">登录</a>
+                    <li th:if="${session.user == null}">
+                        <a href="https://github.com/login/oauth/authorize?client_id=acc9a260fc3c98e2ac44&redirect_uri=http://localhost:8887/callback&scope=user&state=1">登录</a>
+<!--                        <a href="https://github.com/login/oauth/authorize?client_id=677a017266f47b147ff5&redirect_uri=http://www.enjoydark.cn:8887/callback&scope=user&state=1">登录</a>-->
+<!--                        <a th:href="@{'https://github.com/login/oauth/authorize?client_id=677a017266f47b147ff5&redirect_uri='+ ${#httpServletRequest.getRequestURI()} + 'callback&scope=user&state=1'} ">rootPath</a>-->
                     </li>
                 </ul>
             </div>
